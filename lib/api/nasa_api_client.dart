@@ -6,11 +6,11 @@ class NasaApiClient {
 
   NasaApiClient(this._dio);
 
-  Future<List<NasaResponse>> searchNasaImages(String? query) async {
+  Future<NasaResponse> searchNasaImages(String? query) async {
     query ?? " ";
-    final response = await _dio.get('/search?q=$query');
-    final json = response.data as List<dynamic>;
-    final nasaImages = json.map((image) => NasaResponse.fromJson(image));
-    return nasaImages.toList();
+    final response = await _dio.get(
+      '/search?q=$query&media_type=image&page_size=20',
+    );
+    return NasaResponse.fromJson(response.data as Map<String, dynamic>);
   }
 }

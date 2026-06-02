@@ -4,50 +4,76 @@ import 'nasa_image.dart';
 
 part 'nasa_response.g.dart';
 
-@JsonSerializable(createToJson: false)
+@JsonSerializable(explicitToJson: true, createToJson: false)
 class NasaResponse extends Equatable {
-  final List<NasaDataResponse> data;
-  final List<NasaLinkResponse> links;
+  final Collection collection;
 
-  const NasaResponse({required this.data, required this.links});
+  const NasaResponse(this.collection);
 
   factory NasaResponse.fromJson(Map<String, dynamic> json) =>
       _$NasaResponseFromJson(json);
 
+  @override
+  List<Object?> get props => [collection];
+}
+
+@JsonSerializable(explicitToJson: true, createToJson: false)
+class Collection extends Equatable {
+  final List<Item> items;
+
+  const Collection(this.items);
+
+  factory Collection.fromJson(Map<String, dynamic> json) =>
+      _$CollectionFromJson(json);
+
+  @override
+  List<Object?> get props => [items];
+}
+
+@JsonSerializable(explicitToJson: true, createToJson: false)
+class Item extends Equatable {
+  final List<Data> data;
+  final List<Link> links;
+
+  const Item({required this.data, required this.links});
+
   NasaImage toNasaImage() {
+    final metadata = data.first;
+
     return NasaImage(
-      id: data.first.nasaId,
-      name: data.first.title,
+      id: metadata.nasaId,
+      name: metadata.title,
       imageUrl: links.first.href,
     );
   }
+
+  factory Item.fromJson(Map<String, dynamic> json) => _$ItemFromJson(json);
 
   @override
   List<Object?> get props => [data, links];
 }
 
-@JsonSerializable(createToJson: false, fieldRename: FieldRename.snake)
-class NasaDataResponse extends Equatable {
-  final String nasaId;
+@JsonSerializable(explicitToJson: true, createToJson: false)
+class Data extends Equatable {
   final String title;
+  @JsonKey(name: 'nasa_id')
+  final String nasaId;
 
-  const NasaDataResponse({required this.nasaId, required this.title});
+  const Data({required this.title, required this.nasaId});
 
-  factory NasaDataResponse.fromJson(Map<String, dynamic> json) =>
-      _$NasaDataResponseFromJson(json);
+  factory Data.fromJson(Map<String, dynamic> json) => _$DataFromJson(json);
 
   @override
-  List<Object?> get props => [nasaId, title];
+  List<Object?> get props => [title];
 }
 
-@JsonSerializable(createToJson: false)
-class NasaLinkResponse extends Equatable {
+@JsonSerializable(explicitToJson: true, createToJson: false)
+class Link extends Equatable {
   final String href;
 
-  const NasaLinkResponse({required this.href});
+  const Link(this.href);
 
-  factory NasaLinkResponse.fromJson(Map<String, dynamic> json) =>
-      _$NasaLinkResponseFromJson(json);
+  factory Link.fromJson(Map<String, dynamic> json) => _$LinkFromJson(json);
 
   @override
   List<Object?> get props => [href];

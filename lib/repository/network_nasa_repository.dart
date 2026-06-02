@@ -9,7 +9,10 @@ class NetworkNasaRepository implements NasaRepository {
 
   @override
   Future<List<NasaImage>> getNasaImages(String? query) async {
-    final images = await _nasaApiClient.searchNasaImages(query);
-    return images.map((response) => response.toNasaImage()).toList();
+    final nasaResponse = await _nasaApiClient.searchNasaImages(query);
+
+    return nasaResponse.collection.items
+        .map((item) => item.toNasaImage())
+        .toList();
   }
 }
